@@ -2,22 +2,22 @@
 #
 # Copyright 2011 EFDA | European Fusion Development Agreement
 #
-# Licensed under the EUPL, Version 1.1 or - as soon they 
-# will be approved by the European Commission - subsequent  
-# versions of the EUPL (the "Licence"); 
-# You may not use this work except in compliance with the 
-# Licence. 
-# You may obtain a copy of the Licence at: 
-#  
+# Licensed under the EUPL, Version 1.1 or - as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence");
+# You may not use this work except in compliance with the
+# Licence.
+# You may obtain a copy of the Licence at:
+#
 # http://ec.europa.eu/idabc/eupl
 #
-# Unless required by applicable law or agreed to in 
-# writing, software distributed under the Licence is 
-# distributed on an "AS IS" basis, 
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-# express or implied. 
-# See the Licence for the specific language governing 
-# permissions and limitations under the Licence. 
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
 #
 # $Id$
 #
@@ -54,18 +54,31 @@ linux/%.so : linux/%.o $(OBJS)
 	$(COMPILER) -D_CINT -E -I$(CINTSYSDIR)/src  -I$(CINTSYSDIR) $(CFLAGS) $(DEBUG) $(OPTIM)  $*.h > temp/temp.pp
 	cint   -i  $(MAKEDEFAULTDIR)/MakeIfo.cxx $* > $*.sinfo.cpp
 
-linux/%.exe : linux/%.o 
+linux/%.exe : linux/%.o
 	touch linux/$*.exe
 	echo cannot build executable linux/$*.exe use linux/$*.ex
 
 linux/%.ex : linux/%.o $(OBJS)
 	$(COMPILER) linux/$*.o $(OBJS) $(LIBRARIES)  -o linux/$*.ex
 
-depends.linux: dependsRaw.linux 
-	sed -f $(MAKEDEFAULTDIR)/CreateLinuxDepends.sed dependsRaw.linux >depends.linux
+depends.linux: dependsRaw.linux
+	sed -f $(MAKEDEFAULTDIR)/CreateLinuxDepends.sed dependsRaw.linux > depends.linux
+	temp=("${PIPESTATUS[@]}")
+	if [ $(temp[0]) -ne 0 ]
+	then
+		rm depends.linux
+		exit $(temp[0])
+	fi
 
-dependsRaw.linux: 
+dependsRaw.linux:
 	$(COMPILER) $(CFLAGS) $(CFLAGSPEC) $(DEBUG) $(OPTIM) -MM -I. *.c* > dependsRaw.linux
+	# Bashish extension this will not work with none bash.
+	temp=("${PIPESTATUS[@]}")
+	if [ $(temp[0]) -ne 0 ]
+	then
+		rm dependsRaw.linux
+		exit $(temp[0])
+	fi
 	@mkdir -p temp
 	@mkdir -p linux
 
@@ -75,11 +88,11 @@ linux/%.gam : linux/%.o $(OBJS)
 linux/%.drv : linux/%.o $(OBJS)
 	$(COMPILER) -shared -fPIC $(OBJS) $(LIBRARIES) linux/$*.o -o $@
 
-%.spb : 
+%.spb :
 	$(MAKE) -C $* -f Makefile.$(TARGET)
 
 
-%.spc : 
+%.spc :
 	$(MAKE) -C $* -f Makefile.$(TARGET) clean
 
 
@@ -88,5 +101,3 @@ clean:  $(SUBPROJC)
 	rm -rf temp
 	rm -rf *sinfo*
 	rm -rf $(TARGET)
-
-
