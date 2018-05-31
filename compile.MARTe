@@ -2,22 +2,22 @@
 #
 # Copyright 2011 EFDA | European Fusion Development Agreement
 #
-# Licensed under the EUPL, Version 1.1 or - as soon they 
-# will be approved by the European Commission - subsequent  
-# versions of the EUPL (the "Licence"); 
-# You may not use this work except in compliance with the 
-# Licence. 
-# You may obtain a copy of the Licence at: 
-#  
+# Licensed under the EUPL, Version 1.1 or - as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence");
+# You may not use this work except in compliance with the
+# Licence.
+# You may obtain a copy of the Licence at:
+#
 # http://ec.europa.eu/idabc/eupl
 #
-# Unless required by applicable law or agreed to in 
-# writing, software distributed under the Licence is 
-# distributed on an "AS IS" basis, 
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-# express or implied. 
-# See the Licence for the specific language governing 
-# permissions and limitations under the Licence. 
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
 #
 # $Id$
 #
@@ -25,8 +25,8 @@
 #!/bin/bash
 
 args=("$@")
-target=${args[0]}
-configFile=${args[1]}
+target=${args[0]:-linux}
+configFile=${args[1]:-config.MARTe}
 makeMode=${args[2]}
 nargs=$#
 
@@ -62,7 +62,7 @@ function echoSuccess(){
     echo -en "\033[0;0m"
 }
 
-#Prints the error statement and the shows the errors in red 
+#Prints the error statement and the shows the errors in red
 function echoError(){
 
     echo -en "\033[0;31m"
@@ -87,13 +87,13 @@ function getCompileList(){
 function testCompileList(){
 
 	module_in=${1}
-	
+
 	for module_ in $compileList; do
 	    if [ $module_in = $module_ ]; then
 		return 1;
 	    fi
 	done
-	
+
 	return 0;
 }
 
@@ -102,30 +102,30 @@ function testCompileList(){
 function compileModules(){
 
 	targetModules=${1}
-	depth=${2}	
-	
+	depth=${2}
+
 	if [ -n "$4" ]; then
 		echo ".$3. Is not empty"
 		makeModules=$3
 		folderModules=$4
 	else
 		makeModules=""
-		folderModules=$3		
-	fi	
+		folderModules=$3
+	fi
 
 	moduleList=$(find . -maxdepth $depth -type d  | sort -n);
 	workdir=$(pwd)
-	
+
 	for module in $moduleList; do
 	    module=${module:2}
 	    cd $module
-		    
+
 	    if [ -n "$module" ]; then
-	    
+
 	    	testTarget $module
 	    	isTarget=$?
-	    	    		
-	    	if [ $isTarget -eq 0 ]; then	    	   	
+
+	    	if [ $isTarget -eq 0 ]; then
 			testCompileList $module
 			moduleInList=$?
 
@@ -139,12 +139,12 @@ function compileModules(){
 			   else
 					if [ -f Makefile ]; then
 						echo Compiling $module
-						make -f Makefile ${makeModules} 3>&1 1>&2 2>&3 | tee $basedir/${folderModules}-$module.$target.err		
-					fi		
+						make -f Makefile ${makeModules} 3>&1 1>&2 2>&3 | tee $basedir/${folderModules}-$module.$target.err
+					fi
 #				echo "GAM .$module. doesn't have Makefile."${targetModules}
 	#			echo "" > $basedir/$module.notgam
 			    fi
-		       else	       		
+		       else
 		       		if [ -f Makefile -o -f Makefile.$targetModules ]; then
 			   		echo "" > $basedir/${folderModules}-$module.ignore
 			   	fi
@@ -157,15 +157,15 @@ function compileModules(){
 	    cd $workdir
 	done
 }
-	
-function extractFiles(){	
 
-	moduleList=$(find *.zip -maxdepth 1 -type f  | sort -n);	
-	for module in $moduleList; do   
+function extractFiles(){
+
+	moduleList=$(find *.zip -maxdepth 1 -type f  | sort -n);
+	for module in $moduleList; do
 	    unzip -o $module 3>&1 1>&2 2>&3 | tee $basedir/extract-$module.$target.err
 	done
-	
-	moduleList=$(find *.tar.gz -maxdepth 1 -type f  | sort -n);		
+
+	moduleList=$(find *.tar.gz -maxdepth 1 -type f  | sort -n);
 	for module in $moduleList; do
 	    tar -xvf $module 3>&1 1>&2 2>&3 | tee $basedir/extract-$module.$target.err
 	done
@@ -207,14 +207,14 @@ function getList(){
 			command="find . -maxdepth 1 -type f -name ${name} | sort -n"
 			text="ignored on compilation:"
             mode="\033[0;33m"
-		else		
+		else
 			command="find . -maxdepth 1 -type f -size 0k -name ${name} | sort -n"
             mode="\033[0;32m"
 			text="compiled without errors or warnings"
 		fi
 	fi
 
-	modules=`eval $command`       
+	modules=`eval $command`
 
     echo -ne $mode
 	echo "$1 $text"
@@ -235,34 +235,34 @@ function getList(){
 		if [ $2 = "ignore" ]; then
 			rm -rf $1"-"$module".ignore"
 		else
-			rm -rf $1"-"$module".$target.err"	
-		fi	
+			rm -rf $1"-"$module".$target.err"
+		fi
 	    fi
 
 	done
 
 	echo "$count $1 in range"
-	
+
     echo -ne "\033[0;0m"
 }
 
-if [ $nargs -ge 2 ]; then
+#if [ $nargs -ge 2 ]; then
 
 	if [ $nargs -gt 3 ]; then
-		echo "Invalid number of arguments ["$nargs"]. Usage: compile.MARTe <target> <configFile> <makeMode>"	
+		echo "Invalid number of arguments ["$nargs"]. Usage: compile.MARTe <target> <configFile> <makeMode>"
 		exit
 	fi
 
-	if [ $nargs -eq 2 -o $nargs -eq 3 ]; then
+	#if [ $nargs -eq 2 -o $nargs -eq 3 ]; then
 
 		#Test target
 		testTarget "$target"
 		validTarget=$?
 		if [ $validTarget -eq 0 ]; then
-			echo "target argument is invalid. Use one of these:" ${targetList[@]}	
+			echo "target argument is invalid. Use one of these:" ${targetList[@]}
 			exit
 		fi
-	fi	
+	#fi
 
 	if [ $nargs -eq 3 ]; then
 
@@ -270,15 +270,15 @@ if [ $nargs -ge 2 ]; then
 		testMakeModes "$makeMode"
 		validMode=$?
 		if [ $validMode -eq 0 ]; then
-			echo "makeMode argument is invalid. Use one of these:" ${makeModesList[@]}	
+			echo "makeMode argument is invalid. Use one of these:" ${makeModesList[@]}
 			exit
 		fi
 	fi
-	
+
 	if [ ! -r $configFile ]; then
 		echo "config file not exists: " $configFile
 		exit
-	fi	
+	fi
 
 	rm -f *.$target.err
 	rm -f *.ignore
@@ -291,13 +291,13 @@ if [ $nargs -ge 2 ]; then
 	make -f Makefile.$target $makeMode 3>&1 1>&2 2>&3 | tee $basedir/BaseLib2.$target.err
 	echo "Baselib compilation finished"
 
-	cd $basedir	
+	cd $basedir
 	cd $MARTe_dir
 	echo "Compiling MARTe in dir" $MARTe_dir
 	make -f Makefile.$target $makeMode 3>&1 1>&2 2>&3 | tee $basedir/MARTe.$target.err
 	echo "MARTe compilation finished"
 
-	cd $basedir	
+	cd $basedir
 	cd $IOGAMs_dir
 	echo "Compiling IOGAMs in dir" $MARTe_dir
 	make -f Makefile.$target $makeMode 3>&1 1>&2 2>&3 | tee $basedir/IOGAMs.$target.err
@@ -332,7 +332,7 @@ if [ $nargs -ge 2 ]; then
 	echo "Compiling Interfaces Logger in dir" $InterfaceLogger_dir
 	compileModules $target 1 $makeMode "Interfaces-Logger"
 	echo "Interfaces Logger compilation finished"
-	
+
 	cd $basedir
 	cd $InterfaceTimeServiceActivities_dir
 	echo "Compiling Interfaces Time Service Activities in dir" $InterfaceTimeServiceActivities_dir
@@ -342,12 +342,12 @@ if [ $nargs -ge 2 ]; then
 	cd $basedir
         cd "3rdPartyLibs"
         extractFiles
-        
+
 	echo ""
 	echo "*************************Compilation Finished*************************"
 	echo ""
 	echo "********************************Report********************************"
-	
+
 	cd $basedir
 	BaseLib2Error=$(find . -maxdepth 1 -type f -size +0k -name 'BaseLib2.$target.err' | sort -n);
 	if [ -n "$BaseLib2Error" ]; then
@@ -372,27 +372,27 @@ if [ $nargs -ge 2 ]; then
 		echoSuccess "IOGAMs"
 		rm -rf "IOGAMs.$target.err"
 	fi
-	
+
 	#Remove empty files
 	extractError=$(find . -maxdepth 1 -type f -size 0k -name "extract-*.$target.err" | sort -n);
-	for file in $extractError; do   
+	for file in $extractError; do
             rm -rf $file
 	done
-		
-	echo ""	
+
+	echo ""
 	getList "GAMs" "success"
 	echo ""
 	getList "GAMs" "err"
-	echo ""	
+	echo ""
 	getList "GAMs" "ignore"
-	echo ""	
+	echo ""
 	getList "IOGAMs" "success"
 	echo ""
 	getList "IOGAMs" "err"
 	echo ""
 	getList "IOGAMs" "ignore"
 
-	echo ""	
+	echo ""
 	getList "Interfaces" "success"
 	echo ""
 	getList "Interfaces" "err"
@@ -402,6 +402,6 @@ if [ $nargs -ge 2 ]; then
 	echo ""
 	getList "extract" "err"
 
-else
-	echo "Invalid number of arguments ["$nargs"]. Usage: compile.MARTe <target> <configFile> <makeMode>"
-fi
+#else
+#	echo "Invalid number of arguments ["$nargs"]. Usage: compile.MARTe <target> <configFile> <makeMode>"
+#fi
