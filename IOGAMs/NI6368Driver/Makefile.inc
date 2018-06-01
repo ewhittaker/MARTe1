@@ -15,7 +15,7 @@
 #
 #******************************************************************************
 
-#The following compilation variable will include all NI objects to be linked to our gam 
+#The following compilation variable will include all NI objects to be linked to our gam
 NI_LIBRARIES =
 
 MAKEDEFAULTDIR=../../MakeDefaults
@@ -35,12 +35,9 @@ CFLAGS+= -I../../BaseLib2/LoggerService
 LDFLAGS+= -L /usr/lib64 -lpxi6368
 
 #The following line enable compilation of TestDMA and TestPIO examples with BaseLib support (commands below do not include BaseLib in the exec)
-#all: $(OBJS)  $(TARGET)/NI6368Drv$(GAMEXT) 
+#all: $(OBJS)  $(TARGET)/NI6368Drv$(GAMEXT)
 all: $(OBJS)  $(TARGET)/NI6368Drv$(GAMEXT)
 	echo "`pwd` - build complete [$(OBJS)] -"
 
-include depends.$(TARGET)
-
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-
-
+include depends.$(TARGET)

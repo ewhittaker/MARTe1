@@ -15,7 +15,7 @@
 #
 #*******************************************************************************/
 
-#The following compilation variable will include all NI objects to be linked to our gam 
+#The following compilation variable will include all NI objects to be linked to our gam
 NI_LIBRARIES =
 
 MAKEDEFAULTDIR=../../MakeDefaults
@@ -38,8 +38,5 @@ CFLAGS+= -I/opt/codac-3.1/epics/base/include/os/Linux
 
 all: $(OBJS) $(TARGET)/EPICSDrv$(GAMEXT)
 
-include depends.$(TARGET)
-
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
-
-
+include depends.$(TARGET)

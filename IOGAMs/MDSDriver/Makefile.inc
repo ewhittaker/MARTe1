@@ -34,6 +34,5 @@ all: $(OBJS)  \
 	echo  $(OBJS)
 
 
-include depends.$(TARGET)
-
 include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include depends.$(TARGET)
