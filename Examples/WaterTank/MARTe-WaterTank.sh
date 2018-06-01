@@ -2,28 +2,28 @@
 #
 # Copyright 2011 EFDA | European Fusion Development Agreement
 #
-# Licensed under the EUPL, Version 1.1 or - as soon they 
-# will be approved by the European Commission - subsequent  
-# versions of the EUPL (the "Licence"); 
-# You may not use this work except in compliance with the 
-# Licence. 
-# You may obtain a copy of the Licence at: 
-#  
+# Licensed under the EUPL, Version 1.1 or - as soon they
+# will be approved by the European Commission - subsequent
+# versions of the EUPL (the "Licence");
+# You may not use this work except in compliance with the
+# Licence.
+# You may obtain a copy of the Licence at:
+#
 # http://ec.europa.eu/idabc/eupl
 #
-# Unless required by applicable law or agreed to in 
-# writing, software distributed under the Licence is 
-# distributed on an "AS IS" basis, 
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either 
-# express or implied. 
-# See the Licence for the specific language governing 
-# permissions and limitations under the Licence. 
+# Unless required by applicable law or agreed to in
+# writing, software distributed under the Licence is
+# distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied.
+# See the Licence for the specific language governing
+# permissions and limitations under the Licence.
 #
 # $Id$
 #
 #############################################################
 #Start-up script for the MARTe WaterTank example
-#!/bin/sh 
+#!/bin/sh
 
 if [ -z "$1" ]; then
 	echo "Please specify the location of the configuration file"
@@ -61,6 +61,7 @@ LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/DataCollectionGAM/${TARGET
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/NoiseGAM/${TARGET}/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/WaterTank/${TARGET}/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/PIDGAM/${TARGET}/
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/PIDGAM/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/PlottingGAM/${TARGET}/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/GAMs/StorageGAM/${TARGET}/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CODE_DIRECTORY/Interfaces/HTTP/CFGUploader/${TARGET}/
@@ -80,4 +81,3 @@ fi
 $CODE_DIRECTORY/MARTe/${TARGET}/MARTe.ex $1
 
 #cgdb --args $CODE_DIRECTORY/MARTe/${TARGET}/MARTe.ex $1
-
