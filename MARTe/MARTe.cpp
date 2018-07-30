@@ -221,8 +221,8 @@ extern "C"{
         ret &= gcrtme->PrepareMessageEnvelope(gcrtm,"StateMachine");
         ret &= MessageHandler::SendMessage(gcrtme);
         if(!ret){
-            printf("StartMARTeActivities:  Failed to send START message to StateMachine\n");
-            CStaticAssertErrorCondition(FatalError, "StartMARTeActivities:  Failed to send START message to StateMachine\n");
+            printf("StopMARTeActivities:  Failed to send STOP message to StateMachine\n");
+            CStaticAssertErrorCondition(FatalError, "StopMARTeActivities:  Failed to send STOP message to StateMachine\n");
         }
 
         SleepSec(2.0);
